@@ -13,13 +13,13 @@ test.only('First Playwright Test', async ({browser}) => {
     
     await frame.locator('button#closeButton').click();
 
-    const trainsTab = await page.locator('.body-sm.text-xl',{ hasText:'Trains'});
+    const trainsTab = page.locator('.body-sm.text-xl',{ hasText:'Trains'});
     
     await trainsTab.click();
 
-    const searchButton = await page.locator("[data-testid='book-train-tickets']");
+    const searchButton = page.locator("[data-testid='book-train-tickets']");
 
-    await page.waitForTimeout(1000);
+    await page.waitForLoadState('networkidle');
 
     await searchButton.click();
 
