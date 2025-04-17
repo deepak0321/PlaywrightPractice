@@ -2,7 +2,7 @@
 const {test, expect} = require('@playwright/test');
 
 
-test.only('First Playwright Test', async ({browser}) => {
+test.only('Train Ticket Booking feature ', async ({browser}) => {
     const context = await browser.newContext();
 
     const page = await context.newPage();
@@ -25,9 +25,55 @@ test.only('First Playwright Test', async ({browser}) => {
 
     const errorText = await page.locator('div.grow > div').textContent();
 
-    expect(errorText).toContain('Please select a source station');
+    expect(errorText).toContain('Please enter origin station!');
 
-    await page.waitForTimeout(5000);
+    const originStation = 'Trivandrum Cntl (TVC)';
+
+    await page.locator("[placeholder*='Origin']").pressSequentially(originStation);
+
+    const originDropDown = page.locator('.no-scrollbar').first();
+    
+    await originDropDown.waitFor();
+
+    const origins = originDropDown.locator('p');
+
+    for(let i = 0; i < await origins.count() ; i++){
+        const origin = await origins.nth(i).textContent();
+        if(origin === originStation){
+            await origins.nth(i).click();
+            break;
+        }
+    }
+
+    expect(await page.locator('[placeholder*="Origin"]').getAttribute('value')).toBe(originStation);
+
+    const destinationStation = 'Chengalpattu (CGL)';
+
+    await page.locator("[placeholder*='Destination']").pressSequentially(destinationStation);
+
+    const destinationDropDown = page.locator('.no-scrollbar').first();
+    
+    await destinationDropDown.waitFor();
+
+    const destinations = destinationDropDown.locator('p');
+
+    for(let i = 0; i < await destinations.count() ; i++){
+        const destination = await destinations.nth(i).textContent();
+        if(destination === destinationStation){
+            await destinations.nth(i).waitFor();
+            await destinations.nth(i).click();
+            console.log("YESS");
+            break;
+        }
+    }
+
+    expect(await page.locator('[placeholder*="Destination"]').getAttribute('value')).toBe(destinationStation);
+
+    await page.waitForTimeout(10000);
+
+
+
+
 });
 
 test('Browser Context Test', async ({page}) => {
