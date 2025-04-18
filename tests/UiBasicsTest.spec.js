@@ -31,7 +31,7 @@ test.only('Train Ticket Booking feature ', async ({browser}) => {
 
     await page.locator("[placeholder*='Origin']").pressSequentially(originStation);
 
-    const originDropDown = page.locator('.no-scrollbar').first();
+    const originDropDown = await page.locator('.no-scrollbar').first();
     
     await originDropDown.waitFor();
 
@@ -51,14 +51,15 @@ test.only('Train Ticket Booking feature ', async ({browser}) => {
 
     await page.locator("[placeholder*='Destination']").pressSequentially(destinationStation);
 
-    const destinationDropDown = page.locator('.no-scrollbar').first();
+    const destinationDropDown = await page.locator('.no-scrollbar').first();
     
     await destinationDropDown.waitFor();
 
     const destinations = destinationDropDown.locator('p');
-
+    
     for(let i = 0; i < await destinations.count() ; i++){
         const destination = await destinations.nth(i).textContent();
+        console.log(await destinations.count()+"||"+destination +"||" + destinationStation);
         if(destination === destinationStation){
             await destinations.nth(i).waitFor();
             await destinations.nth(i).click();
@@ -69,9 +70,18 @@ test.only('Train Ticket Booking feature ', async ({browser}) => {
 
     expect(await page.locator('[placeholder*="Destination"]').getAttribute('value')).toBe(destinationStation);
 
-    await page.waitForTimeout(10000);
+    const month = await page.locator('.react-calendar__navigation__label span').first();
 
+    const nextMonthBtn = page.locator('.react-calendar__navigation__arrow ', { hasText: '›' });
 
+    const monthToSelect = 'June 2025'
+
+    while(await month.textContent() !== monthToSelect){
+        await nextMonthBtn.click();
+        await month.waitFor();
+    }
+
+   await page.waitForTimeout(10000);
 
 
 });
