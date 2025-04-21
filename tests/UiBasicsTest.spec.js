@@ -2,7 +2,7 @@
 const {test, expect} = require('@playwright/test');
 
 
-test.only('Train Ticket Booking feature ', async ({browser}) => {
+test('Train Ticket Booking feature ', async ({browser}) => {
     const context = await browser.newContext();
 
     const page = await context.newPage();
